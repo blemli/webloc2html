@@ -25,6 +25,12 @@ def convert_all(path, validate=False, silent=False, delete_unreachable=False):
                         globally_confirmed = True
                     elif confirm.lower() != 'y':
                         continue
+                # check if a html file already exists
+                base, _ = os.path.splitext(filename)
+                if os.path.exists(base + '.html'):
+                    confirm = input('DANGER: File ' + base + '.html already exists. Overwrite? (y/n): ')
+                    if confirm.lower() != 'y':
+                        continue
             convert(filename)
             count += 1
         if validate:
