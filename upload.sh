@@ -1,4 +1,10 @@
 pytest
+#abort if not all tests pass
+if [ $? -ne 0 ]; then
+  echo "Tests must pass before uploading to PyPI"
+  exit 1
+fi
+#todo: update version in pyproject.toml
 api_token=$(op item get "pypi api key" --field "Anmeldedaten")
 python3 -m pip install --upgrade twine
 python3 -m pip install --upgrade build
