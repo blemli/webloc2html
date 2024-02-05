@@ -9,7 +9,7 @@ import requests
 globally_confirmed = False
 
 
-def convert_all(path, validate=False, silent=False, delete_unreachable=False):
+def convert_all(path, silent=False,):
     if path is None or not os.path.exists(path):
         print('Invalid path:', path)
         return
@@ -17,6 +17,12 @@ def convert_all(path, validate=False, silent=False, delete_unreachable=False):
     invalid_urls = []
     for filename in [os.path.join(dp, f) for dp, dn, filenames in os.walk(path) for f in filenames]:
         if filename.endswith('.webloc'):
+            # if validate:
+            #     with open(filename) as f:
+            #         url = extract_url(f.read())
+            #         if url and not is_valid(url):
+            #             print('Warning:', url, 'is not reachable')
+            #             invalid_urls.append(filename)
             if not silent:
                 global globally_confirmed
                 if not globally_confirmed:
@@ -33,34 +39,18 @@ def convert_all(path, validate=False, silent=False, delete_unreachable=False):
                         continue
             convert(filename)
             count += 1
-        if validate:
-            url = extact_url(open(filename).read())
-            if url and not is_valid(url):
-                print('Warning:', url, 'is not reachable')
-                invalid_urls.append(filename)
+
     print('Converted', count, 'files')
-    if len(invalid_urls) > 0:
-        print('Invalid URLs:', invalid_urls)
-        delete = input('Do you want to delete invalid files? (y/n): ')
-        if delete.lower() == 'y':
-            for filename in invalid_urls:
-                os.remove(filename)
-                print('Deleted:', filename)
+    # if len(invalid_urls) > 0:
+    #     print('Invalid URLs:', invalid_urls)
+    #     delete = input('Do you want to delete invalid files? (y/n): ')
+    #     if delete.lower() == 'y':
+    #         for filename in invalid_urls:
+    #             os.remove(filename)
+    #             print('Deleted:', filename)
 
 
-def extact_url(data):
-    """
-        <?xml version="1.0" encoding="UTF-8"?>
-    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-    <plist version="1.0">
-    <dict>
-        <key>URL</key>
-        <string>http://blog.fntlnz.wtf/post/systemd-nspawn/</string>
-    </dict>
-    </plist>
-    :param data:
-    :return:
-    """
+def extract_url(data):
     pattern = re.compile(r'<key>URL</key>\s*<string>(.*)</string>')
     match = pattern.search(data)
     if match:
@@ -79,9 +69,6 @@ def is_valid(url):
 
 
 def create_html_link_file(url, filename):
-    """
-    Ensure the directory exists before creating the file.
-    """
     directory = os.path.dirname(filename)
     if directory and not os.path.exists(directory):
         os.makedirs(directory)
@@ -90,12 +77,9 @@ def create_html_link_file(url, filename):
 
 
 def convert(filename):
-    """
-    Correctly handle filename to remove .webloc extension and ensure directory exists.
-    """
     with open(filename) as f:
         data = f.read()
-    url = extact_url(data)
+    url = extract_url(data)
     if url:
         # Properly remove the extension and append .html
         base, _ = os.path.splitext(filename)
@@ -108,11 +92,11 @@ def convert(filename):
 
 @click.command()
 @click.argument('path')
-@click.option('--validate', is_flag=True, default=False, help='Validate URLs are reachable')
 @click.option('--silent', is_flag=True, default=False, help="don't ask for confirmation (DANGER!)")
-@click.option("--delete-unreachable", is_flag=True, default=False, help="delete unreachable URLs")
-def cli(path, validate, silent, delete_unreachable):
-    convert_all(path, validate, silent, delete_unreachable)
+#@click.option('--validate', is_flag=True, default=False, help='Validate URLs are reachable') # todo: implement
+# @click.option("--delete-unreachable", is_flag=True, default=False, help="delete unreachable URLs") # todo: implement
+def cli(path, silent):
+    convert_all(path=path, silent=silent)
 
 
 if __name__ == '__main__':

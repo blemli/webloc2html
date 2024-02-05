@@ -10,10 +10,10 @@ Convert all webloc files in the current directory (including subdirectories) to 
 webloc2html .
 ``````
 
-Also delete unreachable links and don't ask for confirmation (DANGER!):
+Stop it from asking for confirmation (DANGER!):
 
 ``` shell
-webloc2html  /some/path --silent --validate --delete-unreachable
+webloc2html  /some/path --silent
 ```
 
 for more details:
@@ -22,3 +22,8 @@ for more details:
 webloc2html --help
 ```
 
+
+## Roadmap
+
+- Validate Links (check their HTTP Return Code)
+- Delete Invalid Links
