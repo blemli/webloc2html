@@ -1,0 +1,29 @@
+[project]
+name = "webloc2html"
+version = "0.0.4"
+authors = [
+  { name="Problemli GmbH", email="info@problem.li" },
+]
+description = "Converts .webloc to .html"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+# Define project dependencies here
+dependencies = [
+  "requests>=2.31.0",
+  "click>=8.1.7"
+]
+[project.urls]
+Homepage = "https://github.com/blemli/webloc2html"
+Issues = "https://github.com/blemli/webloc2html/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+webloc2html = "webloc2html:cli"
